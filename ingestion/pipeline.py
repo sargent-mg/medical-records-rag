@@ -3,6 +3,8 @@ from prefect import flow, task
 from prefect_dbt.cli.commands import trigger_dbt_cli_command
 from dotenv import load_dotenv
 from ingestion.load_raw import load_all
+from ingestion.chunker import generate_patient_chunks
+from ingestion.embedder import embed_and_store
 
 load_dotenv()
 
@@ -31,11 +33,17 @@ def run_dbt_tests():
         create_summary_artifact=False,
     )
 
+@task(name="embed-chunks", retries=1)
+def embed_chunks():
+    chunks = generate_patient_chunks()
+    embed_and_store(chunks)
+
 @flow(name="medical-records-ingestion")
 def ingestion_pipeline():
     load_raw_csvs()
     run_dbt()
     run_dbt_tests()
+    embed_chunks()
 
 if __name__ == "__main__":
     ingestion_pipeline()
