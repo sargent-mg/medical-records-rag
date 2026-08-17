@@ -15,7 +15,7 @@ dependencies = [
     # Evaluation
     "ragas==0.2.15",
     # Vector store
-    "qdrant-client==1.13.3",
+    "qdrant-client==1.19.0",
     # Database
     "psycopg2-binary==2.9.12",
     "sqlalchemy==2.0.41",
