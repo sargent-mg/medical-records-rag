@@ -1,0 +1,43 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: public
+    tables:
+      - name: patients
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+      - name: conditions
+        columns:
+          - name: patient
+            tests:
+              - not_null
+      - name: medications
+        columns:
+          - name: patient
+            tests:
+              - not_null
+      - name: observations
+        columns:
+          - name: patient
+            tests:
+              - not_null
+      - name: allergies
+        columns:
+          - name: patient
+            tests:
+              - not_null
+      - name: encounters
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+      - name: procedures
+        columns:
+          - name: patient
+            tests:
+              - not_null

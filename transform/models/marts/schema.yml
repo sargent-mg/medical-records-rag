@@ -1,0 +1,114 @@
+version: 2
+
+models:
+  - name: fct_patient_summary
+    description: One row per patient with aggregated conditions, medications, allergies and encounter counts
+    columns:
+      - name: patient_id
+        tests:
+          - unique
+          - not_null
+      - name: full_name
+        tests:
+          - not_null
+      - name: birth_date
+        tests:
+          - not_null
+      - name: age
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 120
+      - name: gender
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["M", "F"]
+
+  - name: fct_patient_conditions
+    description: One row per patient condition with patient name denormalized
+    columns:
+      - name: condition_id
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        tests:
+          - not_null
+      - name: condition_description
+        tests:
+          - not_null
+
+  - name: fct_patient_medications
+    description: One row per patient medication with patient name denormalized
+    columns:
+      - name: medication_id
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        tests:
+          - not_null
+      - name: medication_description
+        tests:
+          - not_null
+
+  - name: fct_patient_observations
+    description: One row per patient observation with patient name denormalized
+    columns:
+      - name: observation_id
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        tests:
+          - not_null
+      - name: observation_description
+        tests:
+          - not_null
+      - name: value
+        tests:
+          - not_null
+
+  - name: fct_patient_allergies
+    description: One row per patient allergy with patient name denormalized
+    columns:
+      - name: allergy_id
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        tests:
+          - not_null
+      - name: allergy_description
+        tests:
+          - not_null
+
+  - name: fct_patient_encounters
+    description: One row per patient encounter with patient name denormalized
+    columns:
+      - name: encounter_id
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        tests:
+          - not_null
+      - name: encounter_description
+        tests:
+          - not_null
+
+  - name: fct_patient_procedures
+    description: One row per patient procedure with patient name denormalized
+    columns:
+      - name: procedure_id
+        tests:
+          - unique
+          - not_null
+      - name: patient_id
+        tests:
+          - not_null
+      - name: procedure_description
+        tests:
+          - not_null
