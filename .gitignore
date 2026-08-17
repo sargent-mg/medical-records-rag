@@ -33,3 +33,4 @@ data/processed/
 
 # pyenv
 .python-versiontools/synthea.jar
+logs/
