@@ -107,7 +107,6 @@ def generate_patient_chunks() -> list[dict]:
             "text": text,
         })
 
-    print(f"Generated {len(chunks)} chunks across {summary_df.shape[0]} patients")
     return chunks
 
 if __name__ == "__main__":

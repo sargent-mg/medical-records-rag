@@ -1,4 +1,5 @@
 import os
+from functools import lru_cache
 from dotenv import load_dotenv
 from langchain_qdrant import QdrantVectorStore
 from langchain_openai import OpenAIEmbeddings
@@ -13,6 +14,10 @@ QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
 COLLECTION_NAME = os.getenv("QDRANT_COLLECTION", "medical_records")
 EMBEDDING_MODEL = "text-embedding-3-small"
+
+@lru_cache(maxsize=1)
+def get_cached_chunks() -> list[dict]:
+    return generate_patient_chunks()
 
 def get_ensemble_retriever(k: int = 5) -> EnsembleRetriever:
     # Dense retriever — Qdrant
@@ -29,7 +34,7 @@ def get_ensemble_retriever(k: int = 5) -> EnsembleRetriever:
     )
 
     # Sparse retriever — BM25
-    chunks = generate_patient_chunks()
+    chunks = get_cached_chunks()
     texts = [chunk["text"] for chunk in chunks]
     bm25_retriever = BM25Retriever.from_texts(texts)
     bm25_retriever.k = k
