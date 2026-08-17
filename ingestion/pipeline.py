@@ -1,40 +1,35 @@
 import os
-import subprocess
 from prefect import flow, task
+from prefect_dbt.cli.commands import trigger_dbt_cli_command
 from dotenv import load_dotenv
 from ingestion.load_raw import load_all
 
 load_dotenv()
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DBT_PROJECT_DIR = os.path.join(PROJECT_ROOT, "transform")
+
 @task(name="load-raw-csvs", retries=2)
 def load_raw_csvs():
     load_all()
 
-@task(name="run-dbt", retries=1)
+@task(name="run-dbt")
 def run_dbt():
-    env = os.environ.copy()
-    result = subprocess.run(
-        [".venv/bin/dbt", "run", "--profiles-dir", "transform"],
-        capture_output=True,
-        text=True,
-        env=env
+    trigger_dbt_cli_command.fn(
+        command="dbt run",
+        project_dir=DBT_PROJECT_DIR,
+        profiles_dir=DBT_PROJECT_DIR,
+        create_summary_artifact=False,
     )
-    print(result.stdout)
-    if result.returncode != 0:
-        raise RuntimeError(f"dbt run failed:\n{result.stderr}")
 
-@task(name="run-dbt-tests", retries=0)
+@task(name="run-dbt-tests")
 def run_dbt_tests():
-    env = os.environ.copy()
-    result = subprocess.run(
-        [".venv/bin/dbt", "test", "--profiles-dir", "transform"],
-        capture_output=True,
-        text=True,
-        env=env
+    trigger_dbt_cli_command.fn(
+        command="dbt test",
+        project_dir=DBT_PROJECT_DIR,
+        profiles_dir=DBT_PROJECT_DIR,
+        create_summary_artifact=False,
     )
-    print(result.stdout)
-    if result.returncode != 0:
-        raise RuntimeError(f"dbt test failed:\n{result.stderr}")
 
 @flow(name="medical-records-ingestion")
 def ingestion_pipeline():

@@ -23,7 +23,9 @@ dependencies = [
     "fastapi==0.115.12",
     "uvicorn==0.34.2",
     # Orchestration
-    "prefect==3.4.4",
+    "prefect>=3.6.17",
+    "prefect-dbt==0.6.2",
+    "prefect-sqlalchemy==0.6.1",
     # Data processing
     "pandas==2.2.3",
     "rank-bm25==0.2.2",

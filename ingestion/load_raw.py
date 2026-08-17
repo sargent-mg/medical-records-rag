@@ -30,13 +30,14 @@ def load_csv_to_postgres(table_name: str, engine) -> int:
     path = f"data/raw/{table_name}.csv"
     df = pd.read_csv(path, low_memory=False)
 
-    # Drop sensitive columns if present
     cols_to_drop = [c for c in SENSITIVE_COLUMNS if c in df.columns]
     if cols_to_drop:
         df = df.drop(columns=cols_to_drop)
 
-    # Normalize column names to lowercase
     df.columns = [c.lower() for c in df.columns]
+
+    with engine.begin() as conn:
+        conn.execute(text(f"DROP TABLE IF EXISTS {table_name} CASCADE"))
 
     df.to_sql(table_name, engine, if_exists="replace", index=False)
     return len(df)
