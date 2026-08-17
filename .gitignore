@@ -32,5 +32,10 @@ data/processed/
 .prefect/
 
 # pyenv
-.python-versiontools/synthea.jar
+.python-version
+
+# Tools
+tools/synthea.jar
+
+# Logs
 logs/
