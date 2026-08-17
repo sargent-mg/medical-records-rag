@@ -39,3 +39,7 @@ tools/synthea.jar
 
 # Logs
 logs/
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
